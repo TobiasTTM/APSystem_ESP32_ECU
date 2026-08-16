@@ -584,16 +584,13 @@ void APSystems::decodeQuerryQT2(aps_inverter *inv,volatile uint8_t *data, uint8_
     uint8_t status[8];
     uint16_t dcV[2];
     uint16_t dcI[4];
-    uint16_t byte38to39;
+    uint16_t time;
     uint16_t acV[3];
     uint16_t byte46to47;
     uint16_t temp;
     uint16_t acFreq;
     uint8_t byte52to69[18];
-    uint32_t byte70to73;
-    uint32_t byte73to77;
-    uint32_t dayCounter;
-    uint32_t runtime;
+    uint32_t dcE[4];
     uint8_t byte86to100[15];
   } poll_t, *pPoll_t __attribute__((packed));
   
@@ -620,14 +617,20 @@ void APSystems::decodeQuerryQT2(aps_inverter *inv,volatile uint8_t *data, uint8_
     inv->acVoltage[2]=__bswap_16(pollData->acV[2])/10.0f;
     inv->acFreq = __bswap_16(pollData->acFreq)/100.0f;
     inv->invTemp = __bswap_16(pollData->temp)/100.0f;
-    inv->dcVoltage[0] = __bswap_16(pollData->dcV[0])/26.3f;
+    inv->dcVoltage[0] = __bswap_16(pollData->dcV[0])/25.0f;
     inv->dcVoltage[1] = inv->dcVoltage[0];
-    inv->dcVoltage[2] = __bswap_16(pollData->dcV[1])/26.3f;
+    inv->dcVoltage[2] = __bswap_16(pollData->dcV[1])/25.0f; //26.3
     inv->dcVoltage[3] = inv->dcVoltage[2];
-    inv->dcCurrent[0] = __bswap_16(pollData->dcI[0])/89.0f;
-    inv->dcCurrent[1] = __bswap_16(pollData->dcI[1])/89.0f;
-    inv->dcCurrent[2] = __bswap_16(pollData->dcI[2])/89.0f;
-    inv->dcCurrent[3] = __bswap_16(pollData->dcI[3])/89.0f;
+    inv->dcCurrent[0] = __bswap_16(pollData->dcI[0])/90.0f; //89
+    inv->dcCurrent[1] = __bswap_16(pollData->dcI[1])/90.0f;
+    inv->dcCurrent[2] = __bswap_16(pollData->dcI[2])/90.0f;
+    inv->dcCurrent[3] = __bswap_16(pollData->dcI[3])/90.0f;
+    inv->dcEnergy[0] = __bswap_32(pollData->dcE[0])/3600000.0f;
+    inv->dcEnergy[1] = __bswap_32(pollData->dcE[1])/3600000.0f;
+    inv->dcEnergy[2] = __bswap_32(pollData->dcE[2])/3600000.0f;
+    inv->dcEnergy[3] = __bswap_32(pollData->dcE[3])/3600000.0f;
+    inv->time = __bswap_16(pollData->time);
+    inv->unknown1 = __bswap_16(pollData->byte46to47);
     inv->newData = true;
   }
   else if(data[8]==0x5C && data[9]==0xDD && data[10]==0xDE){ // Querry data

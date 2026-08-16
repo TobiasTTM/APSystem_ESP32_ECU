@@ -30,8 +30,11 @@ struct aps_inverter{
   float dcVoltage[4];
   float dcCurrent[4];
   float acVoltage[3];
+  float dcEnergy[4];
   float acFreq;
   float invTemp;
+  uint16_t time;
+  uint16_t unknown1;
   bool newData;
 } __attribute__((packed)); 
 
